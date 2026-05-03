@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Core Capital Tracking Engine</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar">
+        <div>
+          <p class="eyebrow">Primary module</p>
+          <h1>Capital Ledger</h1>
+        </div>
+        <div class="top-actions">
+          <div class="theme-switcher" aria-label="Theme">
+            <button class="theme-option" type="button" data-theme-option="light">Light</button>
+            <button class="theme-option" type="button" data-theme-option="dark">Dark</button>
+            <button class="theme-option" type="button" data-theme-option="system">System</button>
+          </div>
+          <label class="file-button">
+            <input id="csvInput" type="file" accept=".csv,text/csv" />
+            Import broker CSV
+          </label>
+        </div>
+      </section>
+
+      <section class="summary-grid" aria-label="Capital summary">
+        <article>
+          <span>Starting capital</span>
+          <strong id="startingCapitalLabel">₹0</strong>
+        </article>
+        <article>
+          <span>Current capital</span>
+          <strong id="currentCapitalLabel">₹0</strong>
+        </article>
+        <article>
+          <span>Total P&L</span>
+          <strong id="totalPnlLabel">₹0</strong>
+        </article>
+        <article>
+          <span>Goal progress</span>
+          <strong id="goalProgressLabel">0%</strong>
+        </article>
+      </section>
+
+      <section class="workspace-grid">
+        <aside class="control-panel" aria-label="Ledger controls">
+          <section class="panel-section">
+            <div class="section-heading">
+              <h2>Base Capital</h2>
+            </div>
+            <label>
+              Starting Capital
+              <input id="startingCapital" type="number" min="0" step="100" />
+            </label>
+          </section>
+
+          <section class="panel-section">
+            <div class="section-heading">
+              <h2>Add Entry</h2>
+            </div>
+            <form id="entryForm" class="entry-form">
+              <input id="entryId" type="hidden" />
+              <label>
+                Date
+                <input id="entryDate" type="date" required />
+              </label>
+              <label>
+                Type
+                <select id="entryType" required>
+                  <option value="pnl">Daily P&L</option>
+                  <option value="deposit">Deposit</option>
+                  <option value="withdrawal">Withdrawal</option>
+                </select>
+              </label>
+              <label>
+                Amount
+                <input id="entryAmount" type="number" step="0.01" required />
+              </label>
+              <label>
+                Notes
+                <textarea id="entryNotes" rows="3" placeholder="Optional"></textarea>
+              </label>
+              <div class="form-actions">
+                <button id="saveEntry" type="submit">Add entry</button>
+                <button id="cancelEdit" class="ghost-button" type="button" hidden>Cancel</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="panel-section">
+            <div class="section-heading">
+              <h2>Goal Planner</h2>
+            </div>
+            <div class="planner-grid">
+              <label>
+                Target Capital
+                <input id="targetCapital" type="number" min="0" step="100" />
+              </label>
+            </div>
+          </section>
+        </aside>
+
+        <section class="main-panel">
+          <section class="chart-strip">
+            <article class="chart-panel">
+              <div class="section-heading">
+                <h2>Equity Curve</h2>
+                <span id="equityRange">No entries yet</span>
+              </div>
+              <canvas id="equityChart" width="900" height="340" aria-label="Capital over time"></canvas>
+            </article>
+            <article class="chart-panel">
+              <div class="section-heading">
+                <h2>Capital vs Target</h2>
+                <span id="targetGap">Set a target</span>
+              </div>
+              <div class="progress-track" aria-label="Goal progress">
+                <div id="goalProgressBar"></div>
+              </div>
+              <canvas id="targetChart" width="900" height="220" aria-label="Daily actual performance"></canvas>
+            </article>
+          </section>
+
+          <section class="metrics-grid" aria-label="Goal calculations">
+            <article>
+              <span>Target covered</span>
+              <strong id="targetCoveredLabel">0%</strong>
+            </article>
+            <article>
+              <span>Amount remaining</span>
+              <strong id="remainingTargetLabel">₹0</strong>
+            </article>
+            <article>
+              <span>Days required</span>
+              <strong id="daysRequiredLabel">--</strong>
+            </article>
+            <article>
+              <span>Avg daily P&L</span>
+              <strong id="avgDailyPnlLabel">₹0</strong>
+            </article>
+          </section>
+
+          <section class="allocations-panel">
+            <div class="section-heading">
+              <h2>Additions</h2>
+              <span>Based on current capital</span>
+            </div>
+            <div id="allocationCards" class="allocation-grid"></div>
+          </section>
+
+          <section class="ledger-panel">
+            <div class="section-heading">
+              <h2>Ledger Entries</h2>
+              <span id="entryCount">0 entries</span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Running Capital</th>
+                    <th>Notes</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody id="ledgerBody"></tbody>
+              </table>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
